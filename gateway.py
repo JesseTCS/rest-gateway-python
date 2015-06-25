@@ -161,6 +161,18 @@ class Blaze:
     def getAchCategories(self):
         self.apiRequest = urljoin(self.apiUrl,"AchGetCategories")
         return(Blaze.performRequest(self))
+		
+    def createAchCategories(self):
+         self.apiRequest = urljoin(self.apiUrl,"AchCreateCategory")
+         return(Blaze.performRequest(self))
+
+    def deleteAchCategories(self):
+         self.apiRequest = urljoin(self.apiUrl,"AchDeleteCategory")
+         return(Blaze.performRequest(self))
+
+    def setupAchStore(self):
+         self.apiRequest = urljoin(self.apiUrl,"AchSetupStore")
+         return(Blaze.performRequest(self))
     
     def createVaultContainer(self):
         self.apiRequest = urljoin(self.apiUrl,"VaultCreateContainer")
