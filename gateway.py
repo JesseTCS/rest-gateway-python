@@ -15,7 +15,7 @@ class RestGateway:
     """ Author: Patrick Petrino | Last Revision: 6/27/2015 | Version: 1.0.0 | This class is required for all Python code making a call to 1stPayBlaze. Please refer to the gateway documentation web page for specifics on what parameters to use for each call."""
     def __init__(self, transactionData):
         self.version = "1.0.0"
-        self.apiUrl = "https://secure.1stpaygateway.net/secure/1stPayClientProxy/Gateway/Transaction/"
+        self.apiUrl = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
         self.data={}
         for key in transactionData:
             i = key
