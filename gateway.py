@@ -103,11 +103,6 @@ class RestGateway:
     def performVoid(self):
         self.apiRequest = urljoin(self.apiUrl,"Void")
         return(RestGateway.performRequest(self))
-
-    # The partial void function is not currently used. Specify transactionAmount when running void instead.  
-    def performPartialVoid(self):
-        self.apiRequest = urljoin(self.apiUrl,"VoidPartial")
-        return(RestGateway.performRequest(self))
     
     def createReAuth(self):
         self.apiRequest = urljoin(self.apiUrl,"ReAuth")
@@ -236,11 +231,4 @@ class RestGateway:
     def queryVaultForShippingRecords(self):
         self.apiRequest = urljoin(self.apiUrl,"VaultQueryShippingRecord")
         return(RestGateway.performRequest(self))
-    
-    def generateTokenFromCreditCard(self):
-        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenFromCreditCard")
-        return(RestGateway.performRequest(self))
-    
-    def getCreditCardFromToken(self):
-        self.apiRequest = urljoin(self.apiUrl,"GetCreditCardFromToken")
-        return(RestGateway.performRequest(self))
+
