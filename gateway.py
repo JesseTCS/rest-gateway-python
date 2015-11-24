@@ -32,9 +32,10 @@ class RestGateway:
         self.status = str()
         self.result = {}
         self.responsedata = ""
+        header = {'Content-Type': 'application/json', 'charset':'utf-8'}
         url = self.apiRequest
         postdata = dict(self.data)
-        results = requests.post(url,data=postdata)
+        results = requests.post(url,data=postdata, headers=header)
         response = json.loads(results.text)
         self.responsecode = str(results.status_code)
         self.raw_response = dict(response)
@@ -232,3 +233,10 @@ class RestGateway:
         self.apiRequest = urljoin(self.apiUrl,"VaultQueryShippingRecord")
         return(RestGateway.performRequest(self))
 
+    def generateTokenFromCreditCard(self):
+        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenFromCreditCard")
+        return(RestGateway.performRequest(self))
+
+    def generateTokenForTransaction(self):
+        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenForTransaction")
+        return(RestGateway.performRequest(self))
