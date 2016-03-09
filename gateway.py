@@ -233,10 +233,7 @@ class RestGateway:
         self.apiRequest = urljoin(self.apiUrl,"VaultQueryShippingRecord")
         return(RestGateway.performRequest(self))
 
-    def generateTokenFromCreditCard(self):
-        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenFromCreditCard")
+    def modifyRecurring(self):
+        self.apiRequest = urljoin(self.apiUrl,"RecurringModify")
         return(RestGateway.performRequest(self))
 
-    def generateTokenForTransaction(self):
-        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenForTransaction")
-        return(RestGateway.performRequest(self))
