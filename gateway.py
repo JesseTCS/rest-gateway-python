@@ -240,3 +240,7 @@ class RestGateway:
         self.apiRequest = urljoin(self.apiUrl,"AccountUpdaterReturn")
         return(RestGateway.performRequest(self))
 
+    def generateTokenFromCreditCard(self):
+        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenFromCreditCard")
+        return(RestGateway.performRequest(self))
+
