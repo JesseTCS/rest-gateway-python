@@ -4,8 +4,8 @@ from requests import post
 
 class RestGateway:
     """
-    | Last Revision: 6/23/2016
-    | Version: 1.2.0
+    | Last Revision: 11/06/2020
+    | Version: 1.2.1
     | This class is required for all Python code making a call to REST API. Please refer to the gateway documentation web page for specifics on what parameters to use for each call.
     """
     def __init__(self, transactionData):
