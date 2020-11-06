@@ -9,7 +9,7 @@ class RestGateway:
     | This class is required for all Python code making a call to REST API. Please refer to the gateway documentation web page for specifics on what parameters to use for each call.
     """
     def __init__(self, transactionData):
-        self.version = "1.2.0"
+        self.version = "1.2.1"
         self.apiUrl = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
         self.TestMode = False
         self.data = {key: transactionData[key] for key in transactionData}
@@ -31,7 +31,7 @@ class RestGateway:
             self.TestMode = False
         return True
 
-    def _performRequest(self, apiRequst_URL=None):
+    def _performRequest(self, apiRequst_URL):
         # Set self.status and self.result to empty so that it can store the new request
         self.status = self.responsecode = ""
         header = {'Content-Type': 'application/json', 'charset': 'utf-8'}
