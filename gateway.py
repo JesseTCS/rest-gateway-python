@@ -1,12 +1,5 @@
-import json
-import requests
-from sys import version_info
-if (version_info > (3, 0)):
-     # Import urljoin for Python 3
-     from urllib.parse import urljoin
-else:
-     # Import urljoin for Python 2
-     from urlparse import urljoin
+from json import dumps, loads
+from requests import post
 
 
 class RestGateway:
@@ -19,228 +12,178 @@ class RestGateway:
         self.version = "1.2.0"
         self.apiUrl = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
         self.TestMode = False
-        self.data={}
-        for key in transactionData:
-            i = key
-            self.data[i] = transactionData[i]
-        self.status=str()
-        self.result={}
-        self.responsecode=""
+        self.data = {key: transactionData[key] for key in transactionData}
+        self.status = self.responsecode = ""
+        self.result = {}
         return
 
     def SwitchEnv(self):
         # Switch between production and validation
-        if self.apiUrl == "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/":
-            self.apiUrl = "https://secure-v.goemerchant.com/secure/RestGW/Gateway/Transaction/"
-            self.TestMode = True
-        elif self.apiUrl == "https://secure-v.goemerchant.com/secure/RestGW/Gateway/Transaction/":
-            self.apiUrl = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
-            self.TestMode = False
+        production = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
+        validation = "https://secure-v.goemerchant.com/secure/RestGW/Gateway/Transaction/"
+        api_url = self.apiUrl
+        url_dict = {production: (validation, True), validation: (production, False)}
+        if api_url in url_dict:
+            self.apiUrl = url_dict[api_url][0]
+            self.TestMode = url_dict[api_url][1]
         else:
-            self.apiUrl = "https://secure.1stpaygateway.net/secure/RestGW/Gateway/Transaction/"
+            self.apiUrl = production
             self.TestMode = False
         return True
 
-    def performRequest(self):
+    def _performRequest(self, apiRequst_URL=None):
         # Set self.status and self.result to empty so that it can store the new request
-        self.status = str()
-        self.result = {}
-        self.responsedata = ""
-        header = {'Content-Type': 'application/json', 'charset':'utf-8'}
-        url = self.apiRequest
+        self.status = self.responsecode = ""
+        header = {'Content-Type': 'application/json', 'charset': 'utf-8'}
         postdata = dict(self.data)
-        results = requests.post(url, data=json.dumps(postdata), headers=header)
-        response = json.loads(results.text)
+        results = post(apiRequst_URL, data=dumps(postdata), headers=header)
+        response = loads(results.text)
         self.responsecode = str(results.status_code)
-        self.result = dict(response)
+        self.result = result = dict(response)
         # Set status according to the appropriate keys, guarding against unexpected return data
-        if ('isSuccess' in self.result.keys() and self.result['isSuccess'] == True):
-            self.status = "Success"
-        elif ('validationHasFailed' in self.result.keys() and self.result['validationHasFailed'] == True):
-            self.status = "Validation"
-        elif ('isError' in self.result.keys() and self.result['isError'] == True):
-            self.status = "Error"
+        for key, value in {'isSuccess': "Success", 'validationHasFailed': "Validation", 'isError': "Error"}.items():
+            if key in result and result[key] is True:
+                self.status = value
+                break
         else:
-            self.status = "Unknown"
-        return self.result
+            self.status = 'Unknown'
+        return result
+
+    def _perform_task(self, value):
+        return self._performRequest(apiRequst_URL=self.apiUrl + value)
 
     def createAuth(self):
-        self.apiRequest = urljoin(self.apiUrl,"Auth")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Auth")
 
     def createAuthUsing1stPayVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"AuthUsingVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AuthUsingVault")
 
     def createSale(self):
-        self.apiRequest = urljoin(self.apiUrl,"Sale")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Sale")
 
     def createSaleUsing1stPayVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"SaleUsingVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="SaleUsingVault")
 
     def createCredit(self):
-        self.apiRequest = urljoin(self.apiUrl,"Credit")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Credit")
 
     def createCreditRetailOnly(self):
-        self.apiRequest = urljoin(self.apiUrl,"CreditRetailOnly")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="CreditRetailOnly")
 
     def createCreditRetailOnlyUsing1stPayVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"CreditRetailOnlyUsingVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="CreditRetailOnlyUsingVault")
 
     def performVoid(self):
-        self.apiRequest = urljoin(self.apiUrl,"Void")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Void")
 
     def createReAuth(self):
-        self.apiRequest = urljoin(self.apiUrl,"ReAuth")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="ReAuth")
 
     def createReSale(self):
-        self.apiRequest = urljoin(self.apiUrl,"ReSale")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="ReSale")
 
     def createReDebit(self):
-        self.apiRequest = urljoin(self.apiUrl,"ReDebit")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="ReDebit")
 
     def query(self):
-        self.apiRequest = urljoin(self.apiUrl,"Query")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Query")
 
     def closeBatch(self):
-        self.apiRequest = urljoin(self.apiUrl,"CloseBatch")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="CloseBatch")
 
     def performSettle(self):
-        self.apiRequest = urljoin(self.apiUrl,"Settle")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="Settle")
 
     def applyTipAdjust(self):
-        self.apiRequest = urljoin(self.apiUrl,"TipAdjust")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="TipAdjust")
 
     def performAchVoid(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchVoid")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchVoid")
 
     def createAchCredit(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchCredit")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchCredit")
 
     def createAchDebit(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchDebit")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchDebit")
 
     def createAchCreditUsing1stPayVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchCreditUsingVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchCreditUsingVault")
 
     def createAchDebitUsing1stPayVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchDebitUsingVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchDebitUsingVault")
 
     def getAchCategories(self):
-        self.apiRequest = urljoin(self.apiUrl,"AchGetCategories")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchGetCategories")
 
     def createAchCategories(self):
-         self.apiRequest = urljoin(self.apiUrl,"AchCreateCategory")
-         return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchCreateCategory")
 
     def deleteAchCategories(self):
-         self.apiRequest = urljoin(self.apiUrl,"AchDeleteCategory")
-         return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchDeleteCategory")
 
     def setupAchStore(self):
-         self.apiRequest = urljoin(self.apiUrl,"AchSetupStore")
-         return(RestGateway.performRequest(self))
+        return self._perform_task(value="AchSetupStore")
 
     def createVaultContainer(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultCreateContainer")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultCreateContainer")
 
     def createVaultAchRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultCreateAchRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultCreateAchRecord")
 
     def createVaultCreditCardRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultCreateCCRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultCreateCCRecord")
 
     def createVaultShippingRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultCreateShippingRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultCreateShippingRecord")
 
     def deleteVaultContainerAndAllAsscData(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultDeleteContainerAndAllAsscData")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultDeleteContainerAndAllAsscData")
 
     def deleteVaultAchRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultDeleteAchRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultDeleteAchRecord")
 
     def deleteVaultCreditCardRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultDeleteCCRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultDeleteCCRecord")
 
     def deleteVaultShippingRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultDeleteShippingRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultDeleteShippingRecord")
 
     def updateVaultContainer(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultUpdateContainer")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultUpdateContainer")
 
     def updateVaultAchRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultUpdateAchRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultUpdateAchRecord")
 
     def updateVaultCreditCardRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultUpdateCCRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultUpdateCCRecord")
 
     def updateVaultShippingRecord(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultUpdateShippingRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultUpdateShippingRecord")
 
     def queryVaults(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultQueryVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultQueryVault")
 
     def queryVaultForCreditCardRecords(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultQueryCCRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultQueryCCRecord")
 
     def queryVaultForAchRecords(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultQueryAchRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultQueryAchRecord")
 
     def queryVaultForShippingRecords(self):
-        self.apiRequest = urljoin(self.apiUrl,"VaultQueryShippingRecord")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="VaultQueryShippingRecord")
 
     def modifyRecurring(self):
-        self.apiRequest = urljoin(self.apiUrl,"RecurringModify")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="RecurringModify")
 
     def submitAcctUpdater(self):
-        self.apiRequest = urljoin(self.apiUrl,"AccountUpdaterSubmit")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AccountUpdaterSubmit")
 
     def submitAcctUpdaterVault(self):
-        self.apiRequest = urljoin(self.apiUrl,"AccountUpdaterSubmitVault")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AccountUpdaterSubmitVault")
 
     def getAcctUpdaterReturn(self):
-        self.apiRequest = urljoin(self.apiUrl,"AccountUpdaterReturn")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="AccountUpdaterReturn")
 
     def generateTokenFromCreditCard(self):
-        self.apiRequest = urljoin(self.apiUrl,"GenerateTokenFromCreditCard")
-        return(RestGateway.performRequest(self))
+        return self._perform_task(value="GenerateTokenFromCreditCard")
 
