@@ -31,12 +31,12 @@ class RestGateway:
             self.TestMode = False
         return True
 
-    def _performRequest(self, apiRequst_URL):
+    def _performRequest(self, value):
         # Set self.status and self.result to empty so that it can store the new request
         self.status = self.responsecode = ""
         header = {'Content-Type': 'application/json', 'charset': 'utf-8'}
-        postdata = dict(self.data)
-        results = post(apiRequst_URL, data=dumps(postdata), headers=header)
+        url = self.apiUrl + value
+        results = post(url, data=dumps(self.data), headers=header)
         response = loads(results.text)
         self.responsecode = str(results.status_code)
         self.result = result = dict(response)
@@ -49,141 +49,137 @@ class RestGateway:
             self.status = 'Unknown'
         return result
 
-    def _perform_task(self, value):
-        return self._performRequest(apiRequst_URL=self.apiUrl + value)
-
     def createAuth(self):
-        return self._perform_task(value="Auth")
+        return self._performRequest(value="Auth")
 
     def createAuthUsing1stPayVault(self):
-        return self._perform_task(value="AuthUsingVault")
+        return self._performRequest(value="AuthUsingVault")
 
     def createSale(self):
-        return self._perform_task(value="Sale")
+        return self._performRequest(value="Sale")
 
     def createSaleUsing1stPayVault(self):
-        return self._perform_task(value="SaleUsingVault")
+        return self._performRequest(value="SaleUsingVault")
 
     def createCredit(self):
-        return self._perform_task(value="Credit")
+        return self._performRequest(value="Credit")
 
     def createCreditRetailOnly(self):
-        return self._perform_task(value="CreditRetailOnly")
+        return self._performRequest(value="CreditRetailOnly")
 
     def createCreditRetailOnlyUsing1stPayVault(self):
-        return self._perform_task(value="CreditRetailOnlyUsingVault")
+        return self._performRequest(value="CreditRetailOnlyUsingVault")
 
     def performVoid(self):
-        return self._perform_task(value="Void")
+        return self._performRequest(value="Void")
 
     def createReAuth(self):
-        return self._perform_task(value="ReAuth")
+        return self._performRequest(value="ReAuth")
 
     def createReSale(self):
-        return self._perform_task(value="ReSale")
+        return self._performRequest(value="ReSale")
 
     def createReDebit(self):
-        return self._perform_task(value="ReDebit")
+        return self._performRequest(value="ReDebit")
 
     def query(self):
-        return self._perform_task(value="Query")
+        return self._performRequest(value="Query")
 
     def closeBatch(self):
-        return self._perform_task(value="CloseBatch")
+        return self._performRequest(value="CloseBatch")
 
     def performSettle(self):
-        return self._perform_task(value="Settle")
+        return self._performRequest(value="Settle")
 
     def applyTipAdjust(self):
-        return self._perform_task(value="TipAdjust")
+        return self._performRequest(value="TipAdjust")
 
     def performAchVoid(self):
-        return self._perform_task(value="AchVoid")
+        return self._performRequest(value="AchVoid")
 
     def createAchCredit(self):
-        return self._perform_task(value="AchCredit")
+        return self._performRequest(value="AchCredit")
 
     def createAchDebit(self):
-        return self._perform_task(value="AchDebit")
+        return self._performRequest(value="AchDebit")
 
     def createAchCreditUsing1stPayVault(self):
-        return self._perform_task(value="AchCreditUsingVault")
+        return self._performRequest(value="AchCreditUsingVault")
 
     def createAchDebitUsing1stPayVault(self):
-        return self._perform_task(value="AchDebitUsingVault")
+        return self._performRequest(value="AchDebitUsingVault")
 
     def getAchCategories(self):
-        return self._perform_task(value="AchGetCategories")
+        return self._performRequest(value="AchGetCategories")
 
     def createAchCategories(self):
-        return self._perform_task(value="AchCreateCategory")
+        return self._performRequest(value="AchCreateCategory")
 
     def deleteAchCategories(self):
-        return self._perform_task(value="AchDeleteCategory")
+        return self._performRequest(value="AchDeleteCategory")
 
     def setupAchStore(self):
-        return self._perform_task(value="AchSetupStore")
+        return self._performRequest(value="AchSetupStore")
 
     def createVaultContainer(self):
-        return self._perform_task(value="VaultCreateContainer")
+        return self._performRequest(value="VaultCreateContainer")
 
     def createVaultAchRecord(self):
-        return self._perform_task(value="VaultCreateAchRecord")
+        return self._performRequest(value="VaultCreateAchRecord")
 
     def createVaultCreditCardRecord(self):
-        return self._perform_task(value="VaultCreateCCRecord")
+        return self._performRequest(value="VaultCreateCCRecord")
 
     def createVaultShippingRecord(self):
-        return self._perform_task(value="VaultCreateShippingRecord")
+        return self._performRequest(value="VaultCreateShippingRecord")
 
     def deleteVaultContainerAndAllAsscData(self):
-        return self._perform_task(value="VaultDeleteContainerAndAllAsscData")
+        return self._performRequest(value="VaultDeleteContainerAndAllAsscData")
 
     def deleteVaultAchRecord(self):
-        return self._perform_task(value="VaultDeleteAchRecord")
+        return self._performRequest(value="VaultDeleteAchRecord")
 
     def deleteVaultCreditCardRecord(self):
-        return self._perform_task(value="VaultDeleteCCRecord")
+        return self._performRequest(value="VaultDeleteCCRecord")
 
     def deleteVaultShippingRecord(self):
-        return self._perform_task(value="VaultDeleteShippingRecord")
+        return self._performRequest(value="VaultDeleteShippingRecord")
 
     def updateVaultContainer(self):
-        return self._perform_task(value="VaultUpdateContainer")
+        return self._performRequest(value="VaultUpdateContainer")
 
     def updateVaultAchRecord(self):
-        return self._perform_task(value="VaultUpdateAchRecord")
+        return self._performRequest(value="VaultUpdateAchRecord")
 
     def updateVaultCreditCardRecord(self):
-        return self._perform_task(value="VaultUpdateCCRecord")
+        return self._performRequest(value="VaultUpdateCCRecord")
 
     def updateVaultShippingRecord(self):
-        return self._perform_task(value="VaultUpdateShippingRecord")
+        return self._performRequest(value="VaultUpdateShippingRecord")
 
     def queryVaults(self):
-        return self._perform_task(value="VaultQueryVault")
+        return self._performRequest(value="VaultQueryVault")
 
     def queryVaultForCreditCardRecords(self):
-        return self._perform_task(value="VaultQueryCCRecord")
+        return self._performRequest(value="VaultQueryCCRecord")
 
     def queryVaultForAchRecords(self):
-        return self._perform_task(value="VaultQueryAchRecord")
+        return self._performRequest(value="VaultQueryAchRecord")
 
     def queryVaultForShippingRecords(self):
-        return self._perform_task(value="VaultQueryShippingRecord")
+        return self._performRequest(value="VaultQueryShippingRecord")
 
     def modifyRecurring(self):
-        return self._perform_task(value="RecurringModify")
+        return self._performRequest(value="RecurringModify")
 
     def submitAcctUpdater(self):
-        return self._perform_task(value="AccountUpdaterSubmit")
+        return self._performRequest(value="AccountUpdaterSubmit")
 
     def submitAcctUpdaterVault(self):
-        return self._perform_task(value="AccountUpdaterSubmitVault")
+        return self._performRequest(value="AccountUpdaterSubmitVault")
 
     def getAcctUpdaterReturn(self):
-        return self._perform_task(value="AccountUpdaterReturn")
+        return self._performRequest(value="AccountUpdaterReturn")
 
     def generateTokenFromCreditCard(self):
-        return self._perform_task(value="GenerateTokenFromCreditCard")
-
+        return self._performRequest(value="GenerateTokenFromCreditCard")
